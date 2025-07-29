@@ -26,7 +26,7 @@ const Navigation = () => {
               <Shield className="w-5 h-5 text-white" />
             </div>
             <span className="font-space-grotesk font-bold text-xl text-foreground">
-              SecureWallet
+              Scion
             </span>
           </Link>
 
