@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import GuideWalletAnimation from '@/components/GuideWalletAnimation';
 import { Shield, Clock, Zap, ArrowRight, Download, Key, Lock, Smartphone } from 'lucide-react';
 
 const Guide = () => {
@@ -50,7 +51,8 @@ const Guide = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-16 relative">
+      <GuideWalletAnimation />
       {/* Hero Section */}
       <section className="gradient-hero py-20">
         <div className="container mx-auto px-4 text-center">
