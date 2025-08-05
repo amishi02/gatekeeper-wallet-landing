@@ -16,7 +16,7 @@ const Register = () => {
     agreeToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
@@ -26,7 +26,7 @@ const Register = () => {
     console.log('Registration submitted:', formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -34,7 +34,7 @@ const Register = () => {
     }));
   };
 
-  const passwordStrength = (password: string) => {
+  const passwordStrength = (password) => {
     const requirements = [
       { regex: /.{8,}/, text: 'At least 8 characters' },
       { regex: /[A-Z]/, text: 'One uppercase letter' },
