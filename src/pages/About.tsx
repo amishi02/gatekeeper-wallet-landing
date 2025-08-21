@@ -22,26 +22,6 @@ const About = () => {
     },
   ];
 
-  const team = [
-    {
-      name: 'Alex Chen',
-      role: 'Founder & CEO',
-      bio: 'Former blockchain engineer at major exchanges with 8+ years in crypto security.',
-      image: '👨‍💼',
-    },
-    {
-      name: 'Sarah Kim',
-      role: 'Head of Security',
-      bio: 'Cybersecurity expert specializing in cryptographic protocols and wallet security.',
-      image: '👩‍💻',
-    },
-    {
-      name: 'Marcus Rodriguez',
-      role: 'Lead Developer',
-      bio: 'Full-stack developer with expertise in blockchain integration and extension development.',
-      image: '👨‍💻',
-    },
-  ];
 
   return (
     <div className="min-h-screen">
@@ -157,36 +137,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-space-grotesk font-bold text-foreground mb-6">
-              Meet the Team
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Passionate experts dedicated to building the future of decentralized finance
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {team.map((member, index) => (
-              <div key={member.name} className="bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-smooth text-center group">
-                <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">
-                  {member.image}
-                </div>
-                <h3 className="text-xl font-space-grotesk font-semibold text-foreground mb-2">
-                  {member.name}
-                </h3>
-                <p className="text-primary font-medium mb-4">{member.role}</p>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {member.bio}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-20 gradient-primary relative overflow-hidden">
