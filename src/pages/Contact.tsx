@@ -185,10 +185,10 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mt-2">Response time: Within 24 hours</p>
                   </div>
 
-                  <div className="bg-card rounded-2xl p-6 shadow-card">
+                  <div className="bg-card rounded-2xl p-6 shadow-card hover-lift transition-smooth">
                     <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-700 rounded-xl flex items-center justify-center mr-4">
-                        <MessageCircle className="w-6 h-6 text-white" />
+                      <div className="w-12 h-12 gradient-secondary rounded-xl flex items-center justify-center mr-4 hover-glow">
+                        <MessageCircle className="w-6 h-6 text-foreground" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-foreground">Community Discord</h3>
@@ -199,9 +199,9 @@ const Contact = () => {
                     <p className="text-muted-foreground text-sm mt-2">Get help from the community</p>
                   </div>
 
-                  <div className="bg-card rounded-2xl p-6 shadow-card">
+                  <div className="bg-card rounded-2xl p-6 shadow-card hover-lift transition-smooth">
                     <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-700 rounded-xl flex items-center justify-center mr-4">
+                      <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mr-4 hover-glow">
                         <HelpCircle className="w-6 h-6 text-white" />
                       </div>
                       <div>

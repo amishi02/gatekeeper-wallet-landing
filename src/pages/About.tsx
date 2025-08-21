@@ -78,23 +78,23 @@ const About = () => {
                       <h4 className="font-semibold text-foreground mb-2">Innovation</h4>
                       <p className="text-sm text-muted-foreground">Pioneering new security paradigms</p>
                     </div>
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Globe className="w-8 h-8 text-white" />
+                    <div className="text-center group hover-scale">
+                      <div className="w-16 h-16 gradient-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 hover-glow transition-smooth">
+                        <Globe className="w-8 h-8 text-foreground" />
                       </div>
                       <h4 className="font-semibold text-foreground mb-2">Global</h4>
                       <p className="text-sm text-muted-foreground">Supporting users worldwide</p>
                     </div>
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <div className="text-center group hover-scale">
+                      <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4 hover-glow transition-smooth">
                         <Lock className="w-8 h-8 text-white" />
                       </div>
                       <h4 className="font-semibold text-foreground mb-2">Secure</h4>
                       <p className="text-sm text-muted-foreground">Military-grade encryption</p>
                     </div>
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Users className="w-8 h-8 text-white" />
+                    <div className="text-center group hover-scale">
+                      <div className="w-16 h-16 gradient-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 hover-glow transition-smooth">
+                        <Users className="w-8 h-8 text-foreground" />
                       </div>
                       <h4 className="font-semibold text-foreground mb-2">Community</h4>
                       <p className="text-sm text-muted-foreground">Built for the people</p>
