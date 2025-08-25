@@ -3,7 +3,7 @@ import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Clock, Zap, ArrowRight, Download, Key, Lock, Smartphone, Chrome, Wallet, Settings, CheckCircle, MousePointer, Eye, RefreshCw, Bell } from 'lucide-react';
+import { Shield, Clock, Zap, ArrowRight, Download, Key, Lock, Smartphone, Chrome, Wallet, Settings, CheckCircle, CursorClick, Search, RotateCcw, Pin, Plus, FileText, Fingerprint, ScanLine } from 'lucide-react';
 
 const Guide = () => {
   const visualSteps = [
@@ -14,10 +14,10 @@ const Guide = () => {
       icon: Chrome,
       visual: "🌐",
       actions: [
-        { icon: MousePointer, text: "Visit Chrome Web Store", color: "bg-blue-500" },
-        { icon: Eye, text: "Search 'Scion Wallet'", color: "bg-green-500" },
-        { icon: Download, text: "Click 'Add to Chrome'", color: "bg-purple-500" },
-        { icon: CheckCircle, text: "Pin to browser toolbar", color: "bg-orange-500" }
+        { icon: CursorClick, text: "Visit Chrome Web Store", color: "gradient-primary" },
+        { icon: Search, text: "Search 'Scion Wallet'", color: "gradient-secondary" },
+        { icon: Download, text: "Click 'Add to Chrome'", color: "bg-primary" },
+        { icon: Pin, text: "Pin to browser toolbar", color: "bg-secondary text-secondary-foreground" }
       ]
     },
     {
@@ -27,10 +27,10 @@ const Guide = () => {
       icon: Key,
       visual: "🔐",
       actions: [
-        { icon: MousePointer, text: "Click 'Create New Wallet'", color: "bg-indigo-500" },
-        { icon: RefreshCw, text: "Generate secure seed phrase", color: "bg-pink-500" },
-        { icon: Key, text: "Write down recovery words", color: "bg-red-500" },
-        { icon: CheckCircle, text: "Confirm seed phrase", color: "bg-teal-500" }
+        { icon: Plus, text: "Click 'Create New Wallet'", color: "gradient-primary" },
+        { icon: RotateCcw, text: "Generate secure seed phrase", color: "bg-primary" },
+        { icon: FileText, text: "Write down recovery words", color: "gradient-secondary" },
+        { icon: CheckCircle, text: "Confirm seed phrase", color: "bg-accent text-accent-foreground" }
       ]
     },
     {
@@ -40,10 +40,10 @@ const Guide = () => {
       icon: Lock,
       visual: "🛡️",
       actions: [
-        { icon: Wallet, text: "Import existing tokens", color: "bg-emerald-500" },
-        { icon: Settings, text: "Add custom networks", color: "bg-cyan-500" },
-        { icon: Shield, text: "Enable security features", color: "bg-violet-500" },
-        { icon: Bell, text: "Set transaction preferences", color: "bg-amber-500" }
+        { icon: Wallet, text: "Import existing tokens", color: "gradient-primary" },
+        { icon: Settings, text: "Add custom networks", color: "bg-primary" },
+        { icon: Shield, text: "Enable security features", color: "gradient-secondary" },
+        { icon: ScanLine, text: "Set transaction preferences", color: "bg-secondary text-secondary-foreground" }
       ]
     },
     {
@@ -53,10 +53,10 @@ const Guide = () => {
       icon: Smartphone,
       visual: "📱",
       actions: [
-        { icon: Download, text: "Download mobile app", color: "bg-lime-500" },
-        { icon: RefreshCw, text: "Sync with extension", color: "bg-sky-500" },
-        { icon: Shield, text: "Enable biometric security", color: "bg-rose-500" },
-        { icon: CheckCircle, text: "Verify cross-device support", color: "bg-slate-500" }
+        { icon: Download, text: "Download mobile app", color: "gradient-primary" },
+        { icon: RotateCcw, text: "Sync with extension", color: "bg-primary" },
+        { icon: Fingerprint, text: "Enable biometric security", color: "gradient-secondary" },
+        { icon: CheckCircle, text: "Verify cross-device support", color: "bg-accent text-accent-foreground" }
       ]
     }
   ];
@@ -88,7 +88,7 @@ const Guide = () => {
       color: "bg-gradient-to-r from-secondary to-secondary-dark",
       features: [
         { icon: Clock, text: "24-hour safety window" },
-        { icon: RefreshCw, text: "Reversible if needed" },
+        { icon: RotateCcw, text: "Reversible if needed" },
         { icon: Shield, text: "Fraud protection" }
       ]
     }
@@ -148,7 +148,7 @@ const Guide = () => {
                       <div className="text-8xl mb-6 group-hover:scale-110 transition-transform duration-300">
                         {step.visual}
                       </div>
-                      <div className="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-pulse">
+                      <div className="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-pulse shadow-glow">
                         <step.icon className="w-10 h-10 text-white" />
                       </div>
                       <Badge variant="outline" className="text-lg px-4 py-2">
@@ -176,7 +176,7 @@ const Guide = () => {
                             key={actionIndex}
                             className="flex items-center space-x-3 p-4 bg-card rounded-xl shadow-sm hover:shadow-md transition-all duration-200 group"
                           >
-                            <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                            <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft`}>
                               <action.icon className="w-5 h-5 text-white" />
                             </div>
                             <span className="text-foreground font-medium">{action.text}</span>
@@ -209,7 +209,7 @@ const Guide = () => {
               <Card key={index} className="relative overflow-hidden hover-scale shadow-card bg-card/50 backdrop-blur-sm border-2 hover:border-primary/30 transition-all duration-300">
                 <CardHeader className="text-center pb-6">
                   <div className="text-6xl mb-4">{type.visual}</div>
-                  <div className={`w-16 h-16 ${type.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+                  <div className={`w-16 h-16 ${type.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-soft`}>
                     <type.icon className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl font-space-grotesk">{type.type}</CardTitle>
