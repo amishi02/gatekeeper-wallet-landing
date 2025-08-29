@@ -71,7 +71,7 @@ const Hero = () => {
               <Download className="w-5 h-5 group-hover:scale-110 group-hover:rotate-12 transition-transform" />
               Download Chrome Extension
             </Button>
-            <Button variant="ghost" size="xl" className="text-foreground border-border/30 hover:bg-card/10 font-semibold group hover-lift magnetic-effect">
+            <Button variant="ghost" size="xl" className="text-white border-white/30 hover:bg-white/20 hover:backdrop-blur-md hover:border-white/50 font-semibold group hover-lift magnetic-effect">
               Learn How It Works
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 group-hover:scale-110 transition-transform" />
             </Button>
