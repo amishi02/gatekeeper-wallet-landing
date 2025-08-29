@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, Eye, EyeOff, Check } from 'lucide-react';
+import { Shield, Eye, EyeOff, Check, Chrome } from 'lucide-react';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -223,6 +223,32 @@ const Register = () => {
                 Create Account
               </Button>
             </form>
+
+            {/* Divider */}
+            <div className="mt-6 mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Google Sign Up */}
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="w-full font-semibold mb-6"
+              onClick={() => {
+                // Handle Google sign-up
+                console.log('Google sign-up clicked');
+              }}
+            >
+              <Chrome className="w-5 h-5 mr-2" />
+              Sign up with Google
+            </Button>
 
             <div className="mt-6 text-center">
               <p className="text-muted-foreground text-sm">

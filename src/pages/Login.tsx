@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, Eye, EyeOff } from 'lucide-react';
+import { Shield, Eye, EyeOff, Chrome } from 'lucide-react';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -102,6 +102,32 @@ const Login = () => {
                 Sign In
               </Button>
             </form>
+
+            {/* Divider */}
+            <div className="mt-6 mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Google Sign In */}
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="w-full font-semibold mb-6"
+              onClick={() => {
+                // Handle Google sign-in
+                console.log('Google sign-in clicked');
+              }}
+            >
+              <Chrome className="w-5 h-5 mr-2" />
+              Sign in with Google
+            </Button>
 
             <div className="mt-6 text-center">
               <p className="text-muted-foreground text-sm">
