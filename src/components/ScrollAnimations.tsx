@@ -83,7 +83,7 @@ const ScrollAnimations = () => {
         </svg>
       </div>
 
-      {/* Wallet Animation */}
+      {/* Security Shield Animation */}
       <div 
         className="absolute top-1/4 right-1/4 w-32 h-32 opacity-25"
         style={{
@@ -92,37 +92,21 @@ const ScrollAnimations = () => {
       >
         <svg viewBox="0 0 100 100" className="w-full h-full">
           <defs>
-            <linearGradient id="walletGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.8" />
               <stop offset="100%" stopColor="hsl(var(--secondary))" stopOpacity="0.4" />
             </linearGradient>
           </defs>
-          {/* Main wallet body */}
-          <rect
-            x="20" y="35" width="60" height="40" rx="4"
-            fill="url(#walletGradient)"
+          <path
+            d="M50,10 L20,25 L20,50 C20,70 35,85 50,90 C65,85 80,70 80,50 L80,25 Z"
+            fill="url(#shieldGradient)"
             className="animate-pulse-glow"
           />
-          {/* Wallet flap */}
-          <rect
-            x="20" y="25" width="60" height="15" rx="4"
-            fill="url(#walletGradient)"
-            opacity="0.6"
-            className="animate-pulse-glow"
-          />
-          {/* Card slot indicator */}
-          <rect
-            x="25" y="45" width="50" height="3" rx="1.5"
+          <path
+            d="M50,20 L30,30 L30,50 C30,65 40,75 50,80 C60,75 70,65 70,50 L70,30 Z"
             fill="none"
             stroke="hsl(var(--primary))"
-            strokeWidth="1"
-            className="connection-line"
-          />
-          <rect
-            x="25" y="55" width="35" height="3" rx="1.5"
-            fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1"
+            strokeWidth="2"
             className="connection-line"
           />
         </svg>
