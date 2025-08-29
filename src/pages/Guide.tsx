@@ -3,7 +3,7 @@ import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Clock, Zap, ArrowRight, Download, Key, Lock, Smartphone, Chrome, Wallet, Settings, CheckCircle, CursorClick, Search, RotateCcw, Pin, Plus, FileText, Fingerprint, ScanLine } from 'lucide-react';
+import { Shield, Clock, Zap, ArrowRight, Download, Key, Lock, Smartphone, Chrome, Wallet, Settings, CheckCircle, MousePointer, Search, RotateCcw, Pin, Plus, FileText, Fingerprint, ScanLine } from 'lucide-react';
 
 const Guide = () => {
   const visualSteps = [
@@ -14,7 +14,7 @@ const Guide = () => {
       icon: Chrome,
       visual: "🌐",
       actions: [
-        { icon: CursorClick, text: "Visit Chrome Web Store", color: "gradient-primary" },
+        { icon: MousePointer, text: "Visit Chrome Web Store", color: "gradient-primary" },
         { icon: Search, text: "Search 'Scion Wallet'", color: "gradient-secondary" },
         { icon: Download, text: "Click 'Add to Chrome'", color: "bg-primary" },
         { icon: Pin, text: "Pin to browser toolbar", color: "bg-secondary text-secondary-foreground" }
