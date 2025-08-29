@@ -63,7 +63,6 @@ const InteractiveBackground = () => {
           background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)',
           left: mousePosition.x - 192,
           top: mousePosition.y - 192,
-          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           filter: 'blur(40px)',
         }}
       />
