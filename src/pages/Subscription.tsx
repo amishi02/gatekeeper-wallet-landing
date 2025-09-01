@@ -15,6 +15,11 @@ import {
   Clock,
   RefreshCw
 } from 'lucide-react';
+// Token icons
+import usdcIcon from '@/assets/tokens/usdc-icon.png';
+import usdtIcon from '@/assets/tokens/usdt-icon.png';
+import daiIcon from '@/assets/tokens/dai-icon.png';
+import busdIcon from '@/assets/tokens/busd-icon.png';
 
 const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>('premium');
@@ -81,12 +86,12 @@ const Subscription = () => {
   ];
 
   const supportedStablecoins = [
-    { name: 'USDC', chain: 'Ethereum', icon: '🔵' },
-    { name: 'USDT', chain: 'Ethereum', icon: '🟢' },
-    { name: 'DAI', chain: 'Ethereum', icon: '🟡' },
-    { name: 'USDC', chain: 'Polygon', icon: '🔵' },
-    { name: 'USDT', chain: 'BSC', icon: '🟢' },
-    { name: 'BUSD', chain: 'BSC', icon: '🟠' }
+    { name: 'USDC', chain: 'Ethereum', icon: usdcIcon },
+    { name: 'USDT', chain: 'Ethereum', icon: usdtIcon },
+    { name: 'DAI', chain: 'Ethereum', icon: daiIcon },
+    { name: 'USDC', chain: 'Polygon', icon: usdcIcon },
+    { name: 'USDT', chain: 'BSC', icon: usdtIcon },
+    { name: 'BUSD', chain: 'BSC', icon: busdIcon }
   ];
 
   return (
@@ -207,7 +212,11 @@ const Subscription = () => {
                   className="bg-card rounded-xl p-4 shadow-card hover-lift transition-smooth border border-border/50"
                 >
                   <div className="flex items-center justify-center mb-2">
-                    <span className="text-2xl mr-2">{coin.icon}</span>
+                    <img 
+                      src={coin.icon} 
+                      alt={`${coin.name} token`} 
+                      className="w-8 h-8 mr-3 rounded-full" 
+                    />
                     <div className="text-left">
                       <div className="font-semibold text-foreground">{coin.name}</div>
                       <div className="text-xs text-muted-foreground">{coin.chain}</div>
