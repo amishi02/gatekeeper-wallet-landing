@@ -130,7 +130,9 @@ const Subscription = () => {
                       ? 'border-primary shadow-glow scale-105'
                       : 'border-border/50 hover:border-primary/50'
                   } ${
-                    selectedPlan === plan.id ? 'ring-2 ring-primary' : ''
+                    selectedPlan === plan.id 
+                      ? 'ring-2 ring-primary bg-primary/5 border-primary shadow-glow transform scale-102' 
+                      : ''
                   }`}
                 >
                   {plan.popular && (
