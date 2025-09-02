@@ -4,6 +4,7 @@ import { Shield, Download, ArrowRight, Zap, Lock } from 'lucide-react';
 import InteractiveBackground from './InteractiveBackground';
 import ScrollAnimations from './ScrollAnimations';
 import { useMagneticEffect } from '@/hooks/useMagneticEffect';
+import cryptoNetworkBg from '@/assets/crypto-network-bg.png';
 
 const Hero = () => {
   const downloadButtonRef = useMagneticEffect<HTMLButtonElement>(0.2);
@@ -14,6 +15,16 @@ const Hero = () => {
       {/* Interactive Background */}
       <InteractiveBackground />
       <ScrollAnimations />
+      
+      {/* Crypto Network Background GIF */}
+      <div 
+        className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-20 animate-pulse-glow"
+        style={{
+          backgroundImage: `url(${cryptoNetworkBg})`,
+          backgroundSize: '60% auto',
+          backgroundPosition: 'center center'
+        }}
+      />
       
       {/* Background Gradient - Now Morphing */}
       <div className="absolute inset-0 morphing-bg opacity-60" />
