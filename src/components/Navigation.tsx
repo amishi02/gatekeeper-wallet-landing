@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Shield, Download } from 'lucide-react';
+import { Menu, X, Shield, Download, User, ChevronDown } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { useRole, UserRole, getRoleLabel, getRoleColor } from '@/contexts/RoleContext';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { currentRole, setCurrentRole, isAuthenticated, setIsAuthenticated } = useRole();
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleRoleChange = (role: UserRole) => {
+    setCurrentRole(role);
+    if (role !== 'guest') {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  };
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -48,11 +66,60 @@ const Navigation = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Login
-              </Button>
-            </Link>
+            {/* Role Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <User className="w-4 h-4" />
+                  <span className={`font-medium ${getRoleColor(currentRole)}`}>
+                    {getRoleLabel(currentRole)}
+                  </span>
+                  <ChevronDown className="w-3 h-3 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card border-border shadow-soft">
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('guest')}
+                  className={`cursor-pointer ${currentRole === 'guest' ? 'bg-accent/50' : ''}`}
+                >
+                  <span className="text-muted-foreground">Guest</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('admin')}
+                  className={`cursor-pointer ${currentRole === 'admin' ? 'bg-accent/50' : ''}`}
+                >
+                  <span className="text-destructive">Administrator</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('enterprise')}
+                  className={`cursor-pointer ${currentRole === 'enterprise' ? 'bg-accent/50' : ''}`}
+                >
+                  <span className="text-primary">Enterprise User</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('user')}
+                  className={`cursor-pointer ${currentRole === 'user' ? 'bg-accent/50' : ''}`}
+                >
+                  <span className="text-secondary">Individual User</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleRoleChange('support')}
+                  className={`cursor-pointer ${currentRole === 'support' ? 'bg-accent/50' : ''}`}
+                >
+                  <span className="text-accent">Support Team</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {!isAuthenticated && currentRole === 'guest' && (
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+              </Link>
+            )}
+            
             <Button variant="gradient" size="sm" className="font-medium">
               <Download className="w-4 h-4" />
               Get Extension
@@ -85,11 +152,62 @@ const Navigation = () => {
                 </Link>
               ))}
               <div className="px-4 pt-2 space-y-2">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    Login
-                  </Button>
-                </Link>
+                {/* Mobile Role Switcher */}
+                <div className="mb-3">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2">
+                        <User className="w-4 h-4" />
+                        <span className={`font-medium ${getRoleColor(currentRole)}`}>
+                          {getRoleLabel(currentRole)}
+                        </span>
+                        <ChevronDown className="w-3 h-3 opacity-50 ml-auto" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48 bg-card border-border shadow-soft">
+                      <DropdownMenuItem 
+                        onClick={() => handleRoleChange('guest')}
+                        className={`cursor-pointer ${currentRole === 'guest' ? 'bg-accent/50' : ''}`}
+                      >
+                        <span className="text-muted-foreground">Guest</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => handleRoleChange('admin')}
+                        className={`cursor-pointer ${currentRole === 'admin' ? 'bg-accent/50' : ''}`}
+                      >
+                        <span className="text-destructive">Administrator</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleRoleChange('enterprise')}
+                        className={`cursor-pointer ${currentRole === 'enterprise' ? 'bg-accent/50' : ''}`}
+                      >
+                        <span className="text-primary">Enterprise User</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleRoleChange('user')}
+                        className={`cursor-pointer ${currentRole === 'user' ? 'bg-accent/50' : ''}`}
+                      >
+                        <span className="text-secondary">Individual User</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleRoleChange('support')}
+                        className={`cursor-pointer ${currentRole === 'support' ? 'bg-accent/50' : ''}`}
+                      >
+                        <span className="text-accent">Support Team</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {!isAuthenticated && currentRole === 'guest' && (
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      Login
+                    </Button>
+                  </Link>
+                )}
+                
                 <Button variant="gradient" size="sm" className="w-full">
                   <Download className="w-4 h-4" />
                   Get Extension
