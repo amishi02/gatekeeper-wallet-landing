@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import daiIcon from '@/assets/tokens/dai-icon.png';
 import busdIcon from '@/assets/tokens/busd-icon.png';
 
 const Subscription = () => {
+  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string>('premium');
 
   const plans = [
@@ -185,9 +187,12 @@ const Subscription = () => {
                     variant={plan.popular ? "gradient" : "outline"}
                     size="lg"
                     className="w-full font-semibold"
-                    onClick={() => setSelectedPlan(plan.id)}
+                    onClick={() => {
+                      setSelectedPlan(plan.id);
+                      navigate(`/subscription/detail?plan=${plan.id}`);
+                    }}
                   >
-                    {selectedPlan === plan.id ? 'Selected' : 'Choose Plan'}
+                    Choose Plan
                   </Button>
                 </div>
               ))}
