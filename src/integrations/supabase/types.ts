@@ -14,16 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blacklisted_access_token: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      enterprise_profile: {
+        Row: {
+          company_name: string
+          created_at: string
+          id: string
+          is_active: boolean
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enterprise_profile_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      otp_log: {
+        Row: {
+          created_at: string
+          id: string
+          is_used: boolean
+          otp_code: string
+          otp_expires_at: string | null
+          otp_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          otp_code: string
+          otp_expires_at?: string | null
+          otp_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          otp_code?: string
+          otp_expires_at?: string | null
+          otp_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "otp_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          account_type: string
+          created_at: string
+          email: string
+          enterprise_id: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          is_email_verified: boolean
+          is_staff: boolean
+          phone_number: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          token_version: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: string
+          created_at?: string
+          email: string
+          enterprise_id?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          is_email_verified?: boolean
+          is_staff?: boolean
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token_version?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: string
+          created_at?: string
+          email?: string
+          enterprise_id?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          is_email_verified?: boolean
+          is_staff?: boolean
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token_version?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_enterprise_id_fkey"
+            columns: ["enterprise_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          profile_picture_url: string | null
+          updated_at: string
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_picture_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_picture_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_otp: {
+        Args: {
+          p_otp_type: string
+          p_user_id: string
+          p_valid_for_minutes?: number
+        }
+        Returns: string
+      }
+      get_user_role: {
+        Args: { p_user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_wallet_access: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
+      validate_otp: {
+        Args: { p_otp_code: string; p_otp_type: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "ADMIN" | "ENTERPRISE" | "SUPPORT" | "USER"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +359,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["ADMIN", "ENTERPRISE", "SUPPORT", "USER"],
+    },
   },
 } as const
