@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Eye, EyeOff, Check, Chrome } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,14 +19,65 @@ const Register = () => {
     agreeToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signUp, user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast({
+        title: "Registration Failed",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
       return;
     }
-    // Handle registration submission
-    console.log('Registration submitted:', formData);
+
+    if (!formData.agreeToTerms) {
+      toast({
+        title: "Registration Failed", 
+        description: "You must agree to the terms and conditions",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setLoading(true);
+
+    try {
+      const { error } = await signUp(formData.email, formData.password, formData.name);
+
+      if (error) {
+        toast({
+          title: "Registration Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Registration Successful",
+          description: "Please check your email to verify your account.",
+        });
+        navigate('/verify-email');
+      }
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +141,7 @@ const Register = () => {
                   required
                   className="w-full"
                   placeholder="John Doe"
+                  disabled={loading}
                 />
               </div>
 
@@ -103,6 +158,7 @@ const Register = () => {
                   required
                   className="w-full"
                   placeholder="your@email.com"
+                  disabled={loading}
                 />
               </div>
 
@@ -120,11 +176,13 @@ const Register = () => {
                     required
                     className="w-full pr-12"
                     placeholder="Create a strong password"
+                    disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={loading}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -177,11 +235,13 @@ const Register = () => {
                     required
                     className="w-full pr-12"
                     placeholder="Confirm your password"
+                    disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={loading}
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -200,6 +260,7 @@ const Register = () => {
                   onChange={handleChange}
                   required
                   className="rounded border-border mr-3 mt-0.5"
+                  disabled={loading}
                 />
                 <label htmlFor="agreeToTerms" className="text-sm text-muted-foreground">
                   I agree to the{' '}
@@ -218,9 +279,9 @@ const Register = () => {
                 variant="gradient" 
                 size="lg" 
                 className="w-full font-semibold"
-                disabled={!formData.agreeToTerms || strengthScore < 3}
+                disabled={!formData.agreeToTerms || strengthScore < 3 || loading}
               >
-                Create Account
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
 
@@ -241,9 +302,13 @@ const Register = () => {
               variant="outline" 
               size="lg" 
               className="w-full font-semibold mb-6"
+              disabled={loading}
               onClick={() => {
-                // Handle Google sign-up
-                console.log('Google sign-up clicked');
+                // TODO: Implement Google sign-up
+                toast({
+                  title: "Coming Soon",
+                  description: "Google sign-up will be available soon.",
+                });
               }}
             >
               <Chrome className="w-5 h-5 mr-2" />

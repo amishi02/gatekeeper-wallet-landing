@@ -1,21 +1,60 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shield, Eye, EyeOff, Chrome } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signIn, user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login submission
-    console.log('Login submitted:', formData);
+    setLoading(true);
+
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+
+      if (error) {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Login Successful",
+          description: "Welcome back!",
+        });
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +99,7 @@ const Login = () => {
                   required
                   className="w-full"
                   placeholder="your@email.com"
+                  disabled={loading}
                 />
               </div>
 
@@ -77,11 +117,13 @@ const Login = () => {
                     required
                     className="w-full pr-12"
                     placeholder="Enter your password"
+                    disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={loading}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -90,7 +132,7 @@ const Login = () => {
 
               <div className="flex items-center justify-between">
                 <label className="flex items-center">
-                  <input type="checkbox" className="rounded border-border mr-2" />
+                  <input type="checkbox" className="rounded border-border mr-2" disabled={loading} />
                   <span className="text-sm text-muted-foreground">Remember me</span>
                 </label>
                 <Link to="/forgot-password" className="text-sm text-primary hover:text-primary/80 transition-colors">
@@ -98,8 +140,14 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" variant="gradient" size="lg" className="w-full font-semibold">
-                Sign In
+              <Button 
+                type="submit" 
+                variant="gradient" 
+                size="lg" 
+                className="w-full font-semibold"
+                disabled={loading}
+              >
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
@@ -120,9 +168,13 @@ const Login = () => {
               variant="outline" 
               size="lg" 
               className="w-full font-semibold mb-6"
+              disabled={loading}
               onClick={() => {
-                // Handle Google sign-in
-                console.log('Google sign-in clicked');
+                // TODO: Implement Google sign-in
+                toast({
+                  title: "Coming Soon",
+                  description: "Google sign-in will be available soon.",
+                });
               }}
             >
               <Chrome className="w-5 h-5 mr-2" />
