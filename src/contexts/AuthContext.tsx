@@ -86,20 +86,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
+      // Use the ensure_profile function which will create a profile if it doesn't exist
+      const { data, error } = await supabase.rpc('ensure_profile');
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error ensuring profile:', error);
         return;
       }
 
       setProfile(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error ensuring profile:', error);
     }
   };
 

@@ -210,6 +210,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          account_type: string
+          created_at: string
+          email: string
+          enterprise_id: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          is_email_verified: boolean
+          is_staff: boolean
+          phone_number: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          token_version: number
+          updated_at: string
+          user_id: string
+        }
+      }
       generate_otp: {
         Args: {
           p_otp_type: string
