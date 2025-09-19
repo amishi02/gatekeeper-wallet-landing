@@ -21,48 +21,27 @@ export function EnterpriseDashboard() {
     checkWalletAccess();
   }, [hasWalletAccess]);
 
-  const enterpriseFeatures = [
+  // Quick action buttons for enterprise management
+  const quickActions = [
     {
-      icon: Building2,
-      title: 'Company Profile',
-      description: 'Manage your enterprise profile, company details, and settings.',
-      action: 'Manage Profile',
-      available: true
+      icon: CreditCard,
+      label: 'Purchase Subscription Plan',
+      variant: 'default' as const,
     },
     {
       icon: Users,
-      title: 'Team Management',
-      description: 'Add, remove, and manage users within your enterprise organization.',
-      action: 'Manage Team',
-      available: true
+      label: 'Manage All Users',
+      variant: 'outline' as const,
     },
     {
-      icon: Wallet,
-      title: 'Wallet Access',
-      description: 'Access and manage your enterprise wallet and transactions.',
-      action: 'Open Wallet',
-      available: walletAccess
+      icon: Users,
+      label: 'Create User',
+      variant: 'outline' as const,
     },
     {
-      icon: CreditCard,
-      title: 'Subscription',
-      description: 'View and manage your enterprise subscription plan and billing.',
-      action: 'View Subscription',
-      available: true
-    },
-    {
-      icon: BarChart3,
-      title: 'Analytics',
-      description: 'Track usage, performance metrics, and team activity.',
-      action: 'View Analytics',
-      available: true
-    },
-    {
-      icon: Settings,
-      title: 'Settings',
-      description: 'Configure enterprise settings, permissions, and preferences.',
-      action: 'Settings',
-      available: true
+      icon: Building2,
+      label: 'Upload CSV',
+      variant: 'outline' as const,
     }
   ];
 
@@ -108,122 +87,89 @@ export function EnterpriseDashboard() {
           </Card>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {enterpriseFeatures.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <Card 
-                key={index} 
-                className={`hover:shadow-lg transition-shadow ${
-                  !feature.available ? 'opacity-60' : ''
-                }`}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <IconComponent className="h-6 w-6 text-primary" />
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    </div>
-                    {!feature.available && (
-                      <Badge variant="secondary" className="text-xs">
-                        Upgrade Required
-                      </Badge>
-                    )}
-                  </div>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
+        {/* Quick Actions */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl">Quick Actions</CardTitle>
+            <CardDescription>Manage your enterprise efficiently</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {quickActions.map((action, index) => {
+                const IconComponent = action.icon;
+                return (
                   <Button 
-                    className="w-full"
-                    disabled={!feature.available}
+                    key={index}
+                    variant={action.variant}
+                    className="h-auto p-4 flex flex-col items-center gap-2"
                   >
-                    {feature.action}
+                    <IconComponent className="h-5 w-5" />
+                    <span className="text-sm text-center">{action.label}</span>
                   </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Company Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Company Overview */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                Company Details
+                Company Overview
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-sm text-muted-foreground">Company Name</div>
+                  <div className="text-sm text-muted-foreground">Company</div>
                   <div className="font-semibold">Acme Corporation</div>
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Enterprise ID</div>
-                  <div className="font-mono text-sm">ENT-2024-001</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Owner</div>
                   <div className="font-semibold">{profile?.full_name}</div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Created</div>
-                  <div className="font-semibold">Jan 15, 2024</div>
-                </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Contact Email</div>
-                <div className="font-semibold">{profile?.email}</div>
+                <div className="text-sm text-muted-foreground">Enterprise ID</div>
+                <div className="font-mono text-sm">ENT-2024-001</div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Enterprise Users */}
+          {/* Users Summary */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
-                Enterprise Users
+                Users Summary
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <div>
-                    <div className="text-2xl font-bold">8</div>
-                    <div className="text-sm text-muted-foreground">Active Users</div>
-                  </div>
+                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">8</div>
+                  <div className="text-sm text-muted-foreground">Active</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <XCircle className="h-4 w-4 text-red-500" />
-                  <div>
-                    <div className="text-2xl font-bold">4</div>
-                    <div className="text-sm text-muted-foreground">Inactive Users</div>
-                  </div>
+                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg">
+                  <div className="text-2xl font-bold text-red-600">4</div>
+                  <div className="text-sm text-muted-foreground">Inactive</div>
                 </div>
               </div>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>User Capacity</span>
-                  <span>8/15</span>
-                </div>
-                <Progress value={53} className="h-2" />
-              </div>
-              <div className="text-sm text-muted-foreground">
-                7 seats available in current plan
+              <div className="text-center text-sm text-muted-foreground">
+                8/15 seats used
               </div>
             </CardContent>
           </Card>
 
-          {/* Subscription Details */}
+          {/* Subscription Status */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
-                Subscription Details
+                Subscription
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -234,65 +180,34 @@ export function EnterpriseDashboard() {
                 </div>
                 <Badge variant="secondary">Active</Badge>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm text-muted-foreground">Next Billing</div>
-                  <div className="font-semibold">Mar 15, 2024</div>
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Days Left</div>
-                  <div className="font-semibold text-primary">23 days</div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Billing Cycle</span>
-                  <span>23/30 days</span>
-                </div>
-                <Progress value={77} className="h-2" />
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4" />
-                <span>Auto-renewal enabled</span>
+              <div className="text-center p-3 bg-primary/10 rounded-lg">
+                <div className="text-2xl font-bold text-primary">23</div>
+                <div className="text-sm text-muted-foreground">Days remaining</div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Active Issues */}
+          {/* Issues Summary */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
-                Active Issues
+                System Status
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-red-500">2</div>
-                  <div className="text-sm text-muted-foreground">Critical</div>
+                <div className="p-3 bg-red-50 dark:bg-red-950 rounded-lg">
+                  <div className="text-xl font-bold text-red-500">2</div>
+                  <div className="text-xs text-muted-foreground">Critical</div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-500">5</div>
-                  <div className="text-sm text-muted-foreground">Warning</div>
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                  <div className="text-xl font-bold text-yellow-500">5</div>
+                  <div className="text-xs text-muted-foreground">Warning</div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-blue-500">3</div>
-                  <div className="text-sm text-muted-foreground">Info</div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50 dark:bg-red-950">
-                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                  <div className="text-sm">Wallet sync failed</div>
-                </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-yellow-50 dark:bg-yellow-950">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <div className="text-sm">Storage usage at 85%</div>
-                </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="text-sm">System maintenance scheduled</div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <div className="text-xl font-bold text-blue-500">3</div>
+                  <div className="text-xs text-muted-foreground">Info</div>
                 </div>
               </div>
             </CardContent>
