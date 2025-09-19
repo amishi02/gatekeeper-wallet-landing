@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Users, Wallet, CreditCard, BarChart3, Settings } from 'lucide-react';
+import { Building2, Users, Wallet, CreditCard, BarChart3, Settings, Calendar, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function EnterpriseDashboard() {
@@ -144,29 +145,154 @@ export function EnterpriseDashboard() {
           })}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Company Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Enterprise Overview</CardTitle>
-              <CardDescription>Quick overview of your enterprise metrics</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Company Details
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">12</div>
-                  <div className="text-sm text-muted-foreground">Team Members</div>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-muted-foreground">Company Name</div>
+                  <div className="font-semibold">Acme Corporation</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">Active</div>
-                  <div className="text-sm text-muted-foreground">Subscription</div>
+                <div>
+                  <div className="text-sm text-muted-foreground">Enterprise ID</div>
+                  <div className="font-mono text-sm">ENT-2024-001</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{walletAccess ? 'Enabled' : 'Disabled'}</div>
-                  <div className="text-sm text-muted-foreground">Wallet Access</div>
+                <div>
+                  <div className="text-sm text-muted-foreground">Owner</div>
+                  <div className="font-semibold">{profile?.full_name}</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">$2,450</div>
-                  <div className="text-sm text-muted-foreground">Monthly Usage</div>
+                <div>
+                  <div className="text-sm text-muted-foreground">Created</div>
+                  <div className="font-semibold">Jan 15, 2024</div>
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Contact Email</div>
+                <div className="font-semibold">{profile?.email}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Enterprise Users */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Enterprise Users
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <div>
+                    <div className="text-2xl font-bold">8</div>
+                    <div className="text-sm text-muted-foreground">Active Users</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-4 w-4 text-red-500" />
+                  <div>
+                    <div className="text-2xl font-bold">4</div>
+                    <div className="text-sm text-muted-foreground">Inactive Users</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>User Capacity</span>
+                  <span>8/15</span>
+                </div>
+                <Progress value={53} className="h-2" />
+              </div>
+              <div className="text-sm text-muted-foreground">
+                7 seats available in current plan
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Subscription Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Subscription Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">Enterprise Pro</div>
+                  <div className="text-sm text-muted-foreground">$299/month</div>
+                </div>
+                <Badge variant="secondary">Active</Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-muted-foreground">Next Billing</div>
+                  <div className="font-semibold">Mar 15, 2024</div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground">Days Left</div>
+                  <div className="font-semibold text-primary">23 days</div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Billing Cycle</span>
+                  <span>23/30 days</span>
+                </div>
+                <Progress value={77} className="h-2" />
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4" />
+                <span>Auto-renewal enabled</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Active Issues */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                Active Issues
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-red-500">2</div>
+                  <div className="text-sm text-muted-foreground">Critical</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-yellow-500">5</div>
+                  <div className="text-sm text-muted-foreground">Warning</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-blue-500">3</div>
+                  <div className="text-sm text-muted-foreground">Info</div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-red-50 dark:bg-red-950">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <div className="text-sm">Wallet sync failed</div>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-yellow-50 dark:bg-yellow-950">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="text-sm">Storage usage at 85%</div>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="text-sm">System maintenance scheduled</div>
                 </div>
               </div>
             </CardContent>
