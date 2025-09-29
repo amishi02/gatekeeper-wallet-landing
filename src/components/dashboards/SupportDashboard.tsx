@@ -1,57 +1,85 @@
 import React from 'react';
-import { MessageSquare, Users, FileText, Search, Clock, AlertTriangle } from 'lucide-react';
+import { Ticket, Search, Clock, CheckCircle, AlertTriangle, Users, Building } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function SupportDashboard() {
   const { profile, signOut } = useAuth();
 
-  const supportFeatures = [
+  const supportMetrics = [
+    { label: 'Tickets Resolved', value: '142', color: 'green' },
+    { label: 'Pending Tickets', value: '23', color: 'yellow' },
+    { label: 'Avg Resolution Time', value: '4.2h', color: 'blue' },
+    { label: 'Customer Satisfaction', value: '94%', color: 'purple' }
+  ];
+
+  const ticketQueue = [
     {
-      icon: MessageSquare,
-      title: 'Ticket Management',
-      description: 'View, respond to, and manage customer support tickets.',
-      action: 'View Tickets'
+      id: 'TKT-001',
+      enterprise: 'Acme Corporation',
+      issue: 'Payment verification failed for subscription',
+      priority: 'high',
+      status: 'open',
+      assignee: 'You',
+      created: '2 hours ago'
     },
     {
-      icon: Users,
-      title: 'User Assistance',
-      description: 'Help users with account issues, password resets, and general inquiries.',
-      action: 'Assist Users'
+      id: 'TKT-002',
+      enterprise: 'Tech Solutions Ltd',
+      issue: 'User unable to access wallet features',
+      priority: 'medium',
+      status: 'pending',
+      assignee: 'Sarah Johnson',
+      created: '4 hours ago'
     },
     {
-      icon: Search,
-      title: 'User Lookup',
-      description: 'Search and view user accounts to provide targeted support.',
-      action: 'Search Users'
+      id: 'TKT-003',
+      enterprise: 'Global Industries',
+      issue: 'Subscription not activated after payment',
+      priority: 'high',
+      status: 'open',
+      assignee: 'You',
+      created: '1 day ago'
     },
     {
-      icon: FileText,
-      title: 'Knowledge Base',
-      description: 'Access and manage support documentation and FAQ resources.',
-      action: 'View Docs'
-    },
-    {
-      icon: Clock,
-      title: 'Activity Log',
-      description: 'Review recent support activities and case history.',
-      action: 'View History'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Escalations',
-      description: 'Manage cases that require escalation to higher support tiers.',
-      action: 'View Escalations'
+      id: 'TKT-004',
+      enterprise: 'StartUp Inc',
+      issue: 'CSV user upload failed',
+      priority: 'low',
+      status: 'resolved',
+      assignee: 'Mike Wilson',
+      created: '2 days ago'
     }
   ];
 
-  const supportStats = [
-    { label: 'Open Tickets', value: '23', status: 'high' },
-    { label: 'Resolved Today', value: '15', status: 'normal' },
-    { label: 'Avg Response Time', value: '2.5h', status: 'normal' },
-    { label: 'Customer Satisfaction', value: '94%', status: 'good' }
+  const enterpriseStatuses = [
+    {
+      name: 'Acme Corporation',
+      subscription: 'Enterprise Pro',
+      status: 'active',
+      expires: '23 days',
+      lastPayment: '0x123...abc',
+      paymentStatus: 'verified'
+    },
+    {
+      name: 'Tech Solutions Ltd',
+      subscription: 'Enterprise Basic',
+      status: 'expired',
+      expires: 'Expired 3 days ago',
+      lastPayment: '0x456...def',
+      paymentStatus: 'pending'
+    },
+    {
+      name: 'Global Industries',
+      subscription: 'Enterprise Pro',
+      status: 'active',
+      expires: '45 days',
+      lastPayment: '0x789...ghi',
+      paymentStatus: 'verified'
+    }
   ];
 
   return (
@@ -62,7 +90,7 @@ export function SupportDashboard() {
             <div>
               <h1 className="text-3xl font-bold text-foreground">Support Dashboard</h1>
               <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
-              <Badge variant="secondary" className="mt-1">Support Team</Badge>
+              <Badge variant="secondary" className="mt-1">Support Staff</Badge>
             </div>
             <Button onClick={signOut} variant="outline">
               Sign Out
@@ -72,100 +100,157 @@ export function SupportDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
-            <CardContent className="pt-6">
-              <div className="flex items-center space-x-2">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold text-blue-800 dark:text-blue-200">Support Access</h3>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    You have limited access to support tools. Wallet and administrative functions are restricted.
-                  </p>
-                </div>
+        {/* Support Access Notice */}
+        <Card className="mb-6 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+          <CardContent className="pt-6">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="h-5 w-5 text-blue-600" />
+              <div>
+                <h3 className="font-semibold text-blue-800 dark:text-blue-200">Limited Support Access</h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  You have read-only access to view tickets and enterprise statuses. Contact admin for escalations.
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {supportFeatures.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-2">
-                    <IconComponent className="h-6 w-6 text-primary" />
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
-                  </div>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full">
-                    {feature.action}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {/* Support Metrics */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5" />
+              Support Metrics
+            </CardTitle>
+            <CardDescription>Your performance overview</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {supportMetrics.map((metric, index) => (
+                <div key={index} className={`text-center p-4 bg-${metric.color}-50 dark:bg-${metric.color}-950 rounded-lg`}>
+                  <div className={`text-2xl font-bold text-${metric.color}-600`}>{metric.value}</div>
+                  <div className="text-sm text-muted-foreground">{metric.label}</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Ticket Queue */}
           <Card>
             <CardHeader>
-              <CardTitle>Support Metrics</CardTitle>
-              <CardDescription>Your current support performance</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Ticket className="h-5 w-5" />
+                Ticket Queue
+              </CardTitle>
+              <CardDescription>
+                <div className="flex items-center gap-2 mt-2">
+                  <Input placeholder="Search tickets..." className="flex-1" />
+                  <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                {supportStats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className={`text-2xl font-bold ${
-                      stat.status === 'high' ? 'text-red-600' :
-                      stat.status === 'good' ? 'text-green-600' :
-                      'text-primary'
-                    }`}>
-                      {stat.value}
+              <div className="space-y-3">
+                {ticketQueue.map((ticket) => (
+                  <div key={ticket.id} className="p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-mono text-sm font-medium">{ticket.id}</div>
+                      <div className="flex gap-2">
+                        <Badge variant={
+                          ticket.priority === 'high' ? 'destructive' : 
+                          ticket.priority === 'medium' ? 'outline' : 'secondary'
+                        }>
+                          {ticket.priority}
+                        </Badge>
+                        <Badge variant={
+                          ticket.status === 'open' ? 'destructive' :
+                          ticket.status === 'pending' ? 'outline' : 'secondary'
+                        }>
+                          {ticket.status}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                    <div className="text-sm font-medium mb-1">{ticket.enterprise}</div>
+                    <div className="text-sm text-muted-foreground mb-2">{ticket.issue}</div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Assigned to: {ticket.assignee}</span>
+                      <span>{ticket.created}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
+          {/* Enterprise Status Search */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Tickets</CardTitle>
-              <CardDescription>Latest support requests</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Enterprise Status
+              </CardTitle>
+              <CardDescription>
+                <div className="flex items-center gap-2 mt-2">
+                  <Input placeholder="Search enterprises..." className="flex-1" />
+                  <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <div className="font-medium">Password reset issue</div>
-                    <div className="text-sm text-muted-foreground">User: john@example.com</div>
+                {enterpriseStatuses.map((enterprise, index) => (
+                  <div key={index} className="p-3 border rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium">{enterprise.name}</div>
+                      <Badge variant={enterprise.status === 'active' ? 'secondary' : 'destructive'}>
+                        {enterprise.status}
+                      </Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {enterprise.subscription} • {enterprise.expires}
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span>Payment: {enterprise.lastPayment}</span>
+                      <Badge variant={enterprise.paymentStatus === 'verified' ? 'secondary' : 'outline'} className="text-xs">
+                        {enterprise.paymentStatus}
+                      </Badge>
+                    </div>
                   </div>
-                  <Badge variant="destructive">High</Badge>
-                </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <div className="font-medium">Account verification</div>
-                    <div className="text-sm text-muted-foreground">User: sarah@company.com</div>
-                  </div>
-                  <Badge variant="secondary">Medium</Badge>
-                </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <div className="font-medium">Feature question</div>
-                    <div className="text-sm text-muted-foreground">User: mike@startup.io</div>
-                  </div>
-                  <Badge variant="outline">Low</Badge>
-                </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Quick Actions */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common support operations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                <Clock className="h-5 w-5" />
+                <span className="text-sm">View Transaction Details</span>
+              </Button>
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                <Users className="h-5 w-5" />
+                <span className="text-sm">Check Subscription Status</span>
+              </Button>
+              <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="text-sm">Escalate to Admin</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

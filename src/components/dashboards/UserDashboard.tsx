@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Wallet, CreditCard, Building2, Settings, BarChart3 } from 'lucide-react';
+import { Wallet, Send, ArrowDownToLine, History, CreditCard, AlertTriangle, CheckCircle, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,49 +20,43 @@ export function UserDashboard() {
     checkWalletAccess();
   }, [hasWalletAccess]);
 
-  const userFeatures = [
+  const walletFeatures = [
     {
-      icon: User,
-      title: 'Profile',
-      description: 'Manage your personal profile, preferences, and account settings.',
-      action: 'Edit Profile',
-      available: true
-    },
-    {
-      icon: Wallet,
-      title: 'Wallet',
-      description: 'Access your digital wallet for transactions and payments.',
-      action: 'Open Wallet',
+      icon: Send,
+      title: 'Send Crypto',
+      description: 'Send cryptocurrency to other wallets',
       available: walletAccess
     },
     {
-      icon: CreditCard,
-      title: 'Subscription',
-      description: 'View and manage your individual subscription plan.',
-      action: 'View Plan',
-      available: true
+      icon: ArrowDownToLine,
+      title: 'Receive Crypto',
+      description: 'Receive cryptocurrency from other wallets',
+      available: walletAccess
     },
     {
-      icon: Building2,
-      title: 'Enterprise',
-      description: 'View your enterprise affiliation and team information.',
-      action: 'View Enterprise',
-      available: !!profile?.enterprise_id
+      icon: History,
+      title: 'Transaction History',
+      description: 'View your complete transaction history',
+      available: walletAccess
     },
     {
-      icon: BarChart3,
-      title: 'Activity',
-      description: 'Track your usage, transactions, and account activity.',
-      action: 'View Activity',
-      available: true
-    },
-    {
-      icon: Settings,
-      title: 'Settings',
-      description: 'Configure your account settings and preferences.',
-      action: 'Settings',
-      available: true
+      icon: Wallet,
+      title: 'Wallet Extension',
+      description: 'Access full wallet functionality',
+      available: walletAccess
     }
+  ];
+
+  const recentTransactions = [
+    { id: 1, type: 'received', amount: '0.5 ETH', from: '0x123...abc', timestamp: '2 hours ago' },
+    { id: 2, type: 'sent', amount: '0.2 ETH', to: '0x456...def', timestamp: '1 day ago' },
+    { id: 3, type: 'received', amount: '100 USDC', from: '0x789...ghi', timestamp: '3 days ago' }
+  ];
+
+  const walletBalances = [
+    { token: 'ETH', balance: '2.4567', usdValue: '$4,521.34' },
+    { token: 'USDC', balance: '1,250.00', usdValue: '$1,250.00' },
+    { token: 'DAI', balance: '500.50', usdValue: '$500.50' }
   ];
 
   if (loading) {
@@ -79,14 +73,9 @@ export function UserDashboard() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">User Dashboard</h1>
+              <h1 className="text-3xl font-bold text-foreground">Wallet Dashboard</h1>
               <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
-              <div className="flex items-center space-x-2 mt-1">
-                <Badge variant="secondary">User Account</Badge>
-                {profile?.enterprise_id && (
-                  <Badge variant="outline">Enterprise Member</Badge>
-                )}
-              </div>
+              <Badge variant="secondary" className="mt-1">Enterprise User</Badge>
             </div>
             <Button onClick={signOut} variant="outline">
               Sign Out
@@ -100,14 +89,11 @@ export function UserDashboard() {
           <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
-                <Wallet className="h-5 w-5 text-yellow-600" />
+                <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 <div>
-                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">Wallet Access Required</h3>
+                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">Wallet Access Inactive</h3>
                   <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                    {profile?.enterprise_id 
-                      ? "Your enterprise needs an active subscription for wallet access."
-                      : "Subscribe to an individual plan or join an enterprise to enable wallet functionality."
-                    }
+                    Your enterprise subscription is inactive. Contact your enterprise admin for wallet access.
                   </p>
                 </div>
               </div>
@@ -115,77 +101,155 @@ export function UserDashboard() {
           </Card>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userFeatures.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <Card 
-                key={index} 
-                className={`hover:shadow-lg transition-shadow ${
-                  !feature.available ? 'opacity-60' : ''
-                }`}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <IconComponent className="h-6 w-6 text-primary" />
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    </div>
-                    {!feature.available && (
-                      <Badge variant="secondary" className="text-xs">
-                        {feature.title === 'Wallet' ? 'Subscription Required' : 'Not Available'}
-                      </Badge>
-                    )}
-                  </div>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button 
-                    className="w-full"
-                    disabled={!feature.available}
-                  >
-                    {feature.action}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        <div className="mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Wallet Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Overview</CardTitle>
-              <CardDescription>Your account status and information</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5" />
+                Wallet Overview
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
-                    {profile?.enterprise_id ? 'Enterprise' : 'Individual'}
+              {walletAccess ? (
+                <div className="space-y-3">
+                  {walletBalances.map((balance) => (
+                    <div key={balance.token} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <div className="font-medium">{balance.token}</div>
+                        <div className="text-sm text-muted-foreground">{balance.usdValue}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">{balance.balance}</div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-3 border-t">
+                    <div className="text-sm text-muted-foreground">Total Portfolio Value</div>
+                    <div className="text-2xl font-bold text-primary">$6,271.84</div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Account Type</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
-                    {walletAccess ? 'Active' : 'Inactive'}
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Wallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Wallet access disabled</p>
+                  <p className="text-sm">Contact enterprise admin</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Subscription Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Subscription Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">Enterprise Plan</div>
+                  <div className="text-sm text-muted-foreground">Inherited from Enterprise</div>
+                </div>
+                <Badge variant={walletAccess ? "secondary" : "destructive"}>
+                  {walletAccess ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-1" />
+                  <div className="text-sm font-medium">Wallet Access</div>
+                  <div className="text-xs text-muted-foreground">
+                    {walletAccess ? "Enabled" : "Disabled"}
                   </div>
-                  <div className="text-sm text-muted-foreground">Wallet Status</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
-                    {profile?.is_email_verified ? 'Verified' : 'Pending'}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Email Status</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">$125</div>
-                  <div className="text-sm text-muted-foreground">Monthly Usage</div>
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600 mx-auto mb-1" />
+                  <div className="text-sm font-medium">Enterprise</div>
+                  <div className="text-xs text-muted-foreground">Acme Corporation</div>
                 </div>
               </div>
+
+              {!walletAccess && (
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                  <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <strong>Subscription Inactive:</strong> Contact your enterprise administrator to renew the subscription for wallet access.
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
+
+        {/* Wallet Features */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Wallet Features</CardTitle>
+            <CardDescription>Available wallet functionality</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {walletFeatures.map((feature, index) => {
+                const IconComponent = feature.icon;
+                return (
+                  <Button
+                    key={index}
+                    variant={feature.available ? "default" : "outline"}
+                    disabled={!feature.available}
+                    className="h-auto p-4 flex flex-col items-center gap-2"
+                  >
+                    <IconComponent className="h-5 w-5" />
+                    <div className="text-center">
+                      <div className="text-sm font-medium">{feature.title}</div>
+                      <div className="text-xs text-muted-foreground">{feature.description}</div>
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Transactions */}
+        {walletAccess && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-5 w-5" />
+                Recent Transactions
+              </CardTitle>
+              <CardDescription>Your latest wallet activity</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {recentTransactions.map((tx) => (
+                  <div key={tx.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      {tx.type === 'received' ? (
+                        <ArrowDownToLine className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <Send className="h-4 w-4 text-blue-600" />
+                      )}
+                      <div>
+                        <div className="font-medium capitalize">{tx.type}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {tx.type === 'received' ? `From ${tx.from}` : `To ${tx.to}`}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold">{tx.amount}</div>
+                      <div className="text-sm text-muted-foreground">{tx.timestamp}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );
