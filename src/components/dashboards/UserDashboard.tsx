@@ -68,21 +68,16 @@ export function UserDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Wallet Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
-              <Badge variant="secondary" className="mt-1">Enterprise User</Badge>
-            </div>
-            <Button onClick={signOut} variant="outline">
-              Sign Out
-            </Button>
+    <div className="min-h-screen bg-background pt-16">
+      <div className="border-b bg-card/50">
+        <div className="container mx-auto px-4 py-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Wallet Dashboard</h1>
+            <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
+            <Badge variant="secondary" className="mt-1">Enterprise User</Badge>
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="container mx-auto px-4 py-8">
         {!walletAccess && (

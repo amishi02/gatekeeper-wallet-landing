@@ -28,20 +28,15 @@ export function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
-            </div>
-            <Button onClick={signOut} variant="outline">
-              Sign Out
-            </Button>
+    <div className="min-h-screen bg-background pt-16">
+      <div className="border-b bg-card/50">
+        <div className="container mx-auto px-4 py-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="container mx-auto px-4 py-8">
         {/* Quick Operations */}

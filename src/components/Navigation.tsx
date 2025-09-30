@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Shield, Download, User, LogOut } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Menu, X, Shield, Download, MoreVertical, User, KeyRound, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
@@ -66,10 +75,30 @@ const Navigation = () => {
                   <User className="w-4 h-4" />
                   <span>{profile?.full_name || user.email}</span>
                 </div>
-                <Button variant="ghost" size="sm" onClick={signOut}>
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/change-password')}>
+                      <KeyRound className="w-4 h-4 mr-2" />
+                      Change Password
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <>
@@ -123,11 +152,35 @@ const Navigation = () => {
                       className="w-full justify-start"
                       onClick={() => {
                         setIsMenuOpen(false);
+                        navigate('/profile');
+                      }}
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        navigate('/change-password');
+                      }}
+                    >
+                      <KeyRound className="w-4 h-4 mr-2" />
+                      Change Password
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setIsMenuOpen(false);
                         signOut();
                       }}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
+                      Logout
                     </Button>
                   </>
                 ) : (
