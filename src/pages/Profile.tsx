@@ -10,15 +10,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Upload, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Upload, CheckCircle, XCircle, Edit2, X, Building2, Mail, Phone, User as UserIcon } from 'lucide-react';
+
+interface EnterpriseProfile {
+  id: string;
+  company_name: string;
+  owner_id: string;
+  is_active: boolean;
+  created_at: string;
+}
 
 const Profile = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [enterpriseData, setEnterpriseData] = useState<EnterpriseProfile | null>(null);
   
   const [formData, setFormData] = useState({
+    phone_number: '',
+    username: '',
+    profile_picture_url: ''
+  });
+
+  const [displayData, setDisplayData] = useState({
     full_name: '',
     phone_number: '',
     username: '',
@@ -52,12 +68,40 @@ const Profile = () => {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      setFormData({
+      const userData = {
         full_name: profileData?.full_name || '',
         phone_number: profileData?.phone_number || '',
         username: userProfileData?.username || '',
         profile_picture_url: userProfileData?.profile_picture_url || ''
+      };
+
+      setDisplayData(userData);
+      setFormData({
+        phone_number: userData.phone_number,
+        username: userData.username,
+        profile_picture_url: userData.profile_picture_url
       });
+
+      // Load enterprise data based on role
+      if (profile?.role === 'ENTERPRISE') {
+        // For ENTERPRISE role, fetch their owned enterprise
+        const { data: enterpriseOwned } = await supabase
+          .from('enterprise_profile')
+          .select('*')
+          .eq('owner_id', user.id)
+          .maybeSingle();
+        
+        setEnterpriseData(enterpriseOwned);
+      } else if (profile?.role === 'USER' && profileData?.enterprise_id) {
+        // For USER role, fetch their associated enterprise
+        const { data: enterpriseAssociated } = await supabase
+          .from('enterprise_profile')
+          .select('*')
+          .eq('id', profileData.enterprise_id)
+          .maybeSingle();
+        
+        setEnterpriseData(enterpriseAssociated);
+      }
     } catch (error) {
       console.error('Error loading profile:', error);
       toast({
@@ -81,11 +125,6 @@ const Profile = () => {
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      
-      // Note: Storage bucket needs to be created via SQL migration
-      // For now, we'll store a placeholder URL
       const placeholderUrl = URL.createObjectURL(file);
       
       setFormData({
@@ -95,7 +134,7 @@ const Profile = () => {
 
       toast({
         title: "Image Selected",
-        description: "Save your profile to upload the image",
+        description: "Save your changes to update the image",
       });
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -109,17 +148,30 @@ const Profile = () => {
     }
   };
 
+  const handleEdit = () => {
+    setIsEditMode(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditMode(false);
+    // Reset form data to current display data
+    setFormData({
+      phone_number: displayData.phone_number,
+      username: displayData.username,
+      profile_picture_url: displayData.profile_picture_url
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
     setLoading(true);
     try {
-      // Update profiles table
+      // Update profiles table (only phone_number)
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
-          full_name: formData.full_name,
           phone_number: formData.phone_number
         })
         .eq('user_id', user.id);
@@ -138,6 +190,16 @@ const Profile = () => {
         });
 
       if (userProfileError) throw userProfileError;
+
+      // Update display data
+      setDisplayData({
+        ...displayData,
+        phone_number: formData.phone_number,
+        username: formData.username,
+        profile_picture_url: formData.profile_picture_url
+      });
+
+      setIsEditMode(false);
 
       toast({
         title: "Success",
@@ -167,121 +229,226 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container mx-auto px-4 pt-24 pb-12">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Profile Settings</h1>
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold">Profile</h1>
+            {!isEditMode && (
+              <Button onClick={handleEdit}>
+                <Edit2 className="mr-2 h-4 w-4" />
+                Edit Profile
+              </Button>
+            )}
+          </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Profile Picture Card */}
+          <div className="space-y-6">
+            {/* Profile Picture & Basic Info Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Profile Picture</CardTitle>
-                <CardDescription>Update your profile photo</CardDescription>
+                <CardTitle>Profile Information</CardTitle>
+                <CardDescription>
+                  {isEditMode ? 'Update your profile details' : 'Your personal information'}
+                </CardDescription>
               </CardHeader>
-              <CardContent className="flex items-center gap-6">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={formData.profile_picture_url} />
-                  <AvatarFallback className="text-2xl">
-                    {formData.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <Input
-                    id="profile-picture"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('profile-picture')?.click()}
-                    disabled={uploading}
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Photo
-                      </>
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-8">
+                  {/* Avatar Section */}
+                  <div className="flex flex-col items-center gap-4">
+                    <Avatar className="h-32 w-32">
+                      <AvatarImage src={isEditMode ? formData.profile_picture_url : displayData.profile_picture_url} />
+                      <AvatarFallback className="text-3xl">
+                        {displayData.full_name?.charAt(0) || user.email?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isEditMode && (
+                      <div>
+                        <Input
+                          id="profile-picture"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          disabled={uploading}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => document.getElementById('profile-picture')?.click()}
+                          disabled={uploading}
+                        >
+                          {uploading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Change Photo
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     )}
-                  </Button>
+                  </div>
+
+                  {/* Details Section */}
+                  <div className="flex-1 space-y-6">
+                    {/* Full Name - Read Only */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <UserIcon className="h-4 w-4" />
+                        Full Name
+                      </Label>
+                      <div className="text-lg font-medium">{displayData.full_name || 'Not set'}</div>
+                    </div>
+
+                    {/* Username - Editable */}
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      {isEditMode ? (
+                        <Input
+                          id="username"
+                          name="username"
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          placeholder="Enter your username"
+                        />
+                      ) : (
+                        <div className="text-lg">{displayData.username || 'Not set'}</div>
+                      )}
+                    </div>
+
+                    {/* Phone Number - Editable */}
+                    <div className="space-y-2">
+                      <Label htmlFor="phone_number" className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Phone Number
+                      </Label>
+                      {isEditMode ? (
+                        <Input
+                          id="phone_number"
+                          name="phone_number"
+                          type="tel"
+                          value={formData.phone_number}
+                          onChange={handleInputChange}
+                          placeholder="+1 (555) 000-0000"
+                        />
+                      ) : (
+                        <div className="text-lg">{displayData.phone_number || 'Not set'}</div>
+                      )}
+                    </div>
+
+                    {/* Email - Read Only */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email Address
+                      </Label>
+                      <div className="text-lg">{profile.email}</div>
+                      <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Action Buttons for Edit Mode */}
+                {isEditMode && (
+                  <div className="flex gap-4 mt-6 pt-6 border-t">
+                    <Button onClick={handleSubmit} disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        'Save Changes'
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                      disabled={loading}
+                    >
+                      <X className="mr-2 h-4 w-4" />
+                      Cancel
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Personal Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Update your personal details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="full_name">Full Name</Label>
-                  <Input
-                    id="full_name"
-                    name="full_name"
-                    value={formData.full_name}
-                    onChange={handleInputChange}
-                    placeholder="Enter your full name"
-                  />
-                </div>
+            {/* Enterprise Information Card */}
+            {enterpriseData && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5" />
+                    Enterprise Information
+                  </CardTitle>
+                  <CardDescription>
+                    {profile?.role === 'ENTERPRISE' 
+                      ? 'Your enterprise details' 
+                      : 'Your associated enterprise'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Company Name</Label>
+                        <p className="text-lg font-medium mt-1">{enterpriseData.company_name}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>Enterprise Status</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {enterpriseData.is_active ? 'Active enterprise account' : 'Inactive enterprise account'}
+                        </p>
+                      </div>
+                      <Badge variant={enterpriseData.is_active ? "default" : "secondary"}>
+                        {enterpriseData.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    placeholder="Enter your username"
-                  />
-                </div>
+                    {profile?.role === 'ENTERPRISE' && (
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label>Role in Enterprise</Label>
+                          <p className="text-sm text-muted-foreground mt-1">Enterprise Owner</p>
+                        </div>
+                        <Badge variant="outline">Owner</Badge>
+                      </div>
+                    )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone_number">Phone Number</Label>
-                  <Input
-                    id="phone_number"
-                    name="phone_number"
-                    type="tel"
-                    value={formData.phone_number}
-                    onChange={handleInputChange}
-                    placeholder="+1 (555) 000-0000"
-                  />
-                </div>
+                    <div>
+                      <Label>Member Since</Label>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {new Date(enterpriseData.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    value={profile.email}
-                    disabled
-                    className="bg-muted"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Email cannot be changed
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Account Information */}
+            {/* Account Information Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Account Information</CardTitle>
-                <CardDescription>View your account details</CardDescription>
+                <CardDescription>Your account status and verification details</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Email Verification Status</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground mt-1">
                       {profile.is_email_verified ? 'Your email is verified' : 'Your email is not verified'}
                     </p>
                   </div>
@@ -300,9 +467,11 @@ const Profile = () => {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label>Role</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {profile.role}
+                    <Label>Account Role</Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {profile.role === 'ADMIN' ? 'Administrator' : 
+                       profile.role === 'ENTERPRISE' ? 'Enterprise Owner' :
+                       profile.role === 'SUPPORT' ? 'Support Staff' : 'User'}
                     </p>
                   </div>
                   <Badge variant="outline">{profile.role}</Badge>
@@ -311,8 +480,8 @@ const Profile = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Account Status</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {profile.is_active ? 'Active' : 'Inactive'}
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {profile.is_active ? 'Your account is active' : 'Your account is inactive'}
                     </p>
                   </div>
                   <Badge variant={profile.is_active ? "default" : "secondary"}>
@@ -321,28 +490,7 @@ const Profile = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button type="submit" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Changes'
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/dashboard')}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+          </div>
         </div>
       </main>
     </div>
