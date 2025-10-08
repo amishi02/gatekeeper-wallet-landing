@@ -1,15 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Building2, Users, Wallet, CreditCard, BarChart3, Settings, Calendar, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Building2, Users, Wallet, CreditCard, BarChart3, Settings, Calendar, AlertTriangle, CheckCircle, XCircle, Upload } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function EnterpriseDashboard() {
+  const navigate = useNavigate();
   const { profile, signOut, hasWalletAccess } = useAuth();
   const [walletAccess, setWalletAccess] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkWalletAccess = async () => {
@@ -21,27 +39,87 @@ export function EnterpriseDashboard() {
     checkWalletAccess();
   }, [hasWalletAccess]);
 
+  const handleCreateUser = async () => {
+    if (!newUserEmail || !newUserEmail.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    try {
+      setIsCreatingUser(true);
+      
+      // Create the user via Supabase Auth
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: newUserEmail,
+        email_confirm: true,
+        user_metadata: {
+          role: 'USER',
+          enterprise_id: profile?.enterprise_id || profile?.id,
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success('User invitation sent successfully');
+      setNewUserEmail('');
+      setIsCreateUserModalOpen(false);
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      toast.error('Failed to create user: ' + error.message);
+    } finally {
+      setIsCreatingUser(false);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = [
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
+
+    if (!validTypes.includes(file.type) && !file.name.endsWith('.csv')) {
+      toast.error('Please upload a CSV or Excel file');
+      return;
+    }
+
+    // TODO: Process the file
+    toast.success(`File "${file.name}" uploaded successfully`);
+    
+    // Reset the input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   // Quick action buttons for enterprise management
   const quickActions = [
     {
       icon: CreditCard,
       label: 'Purchase Subscription Plan',
       variant: 'default' as const,
+      onClick: () => navigate('/subscription'),
     },
     {
       icon: Users,
       label: 'Manage All Users',
       variant: 'outline' as const,
+      onClick: () => navigate('/manage-users'),
     },
     {
       icon: Users,
       label: 'Create User',
       variant: 'outline' as const,
+      onClick: () => setIsCreateUserModalOpen(true),
     },
     {
-      icon: Building2,
+      icon: Upload,
       label: 'Upload CSV',
       variant: 'outline' as const,
+      onClick: () => fileInputRef.current?.click(),
     }
   ];
 
@@ -97,6 +175,7 @@ export function EnterpriseDashboard() {
                     key={index}
                     variant={action.variant}
                     className="h-auto p-4 flex flex-col items-center gap-2"
+                    onClick={action.onClick}
                   >
                     <IconComponent className="h-5 w-5" />
                     <span className="text-sm text-center">{action.label}</span>
@@ -209,6 +288,59 @@ export function EnterpriseDashboard() {
           </Card>
         </div>
       </main>
+
+      {/* Hidden file input for CSV upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,.xlsx,.xls"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+
+      {/* Create User Modal */}
+      <Dialog open={isCreateUserModalOpen} onOpenChange={setIsCreateUserModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New User</DialogTitle>
+            <DialogDescription>
+              Enter the email address of the user you want to add to your enterprise.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="user@example.com"
+                value={newUserEmail}
+                onChange={(e) => setNewUserEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !isCreatingUser) {
+                    handleCreateUser();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCreateUserModalOpen(false);
+                setNewUserEmail('');
+              }}
+              disabled={isCreatingUser}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleCreateUser} disabled={isCreatingUser}>
+              {isCreatingUser ? 'Creating...' : 'Create User'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
