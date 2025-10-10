@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import Navigation from "@/components/Navigation";
@@ -98,23 +96,31 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-accent/10">
       <Navigation />
-      <main className="container mx-auto px-4 py-8 max-w-md mt-20">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Lock className="h-6 w-6 text-primary" />
-              <CardTitle>Change Password</CardTitle>
+      
+      <div className="pt-24 pb-12 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-md">
+          {/* Logo & Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8 text-white" />
             </div>
-            <CardDescription>
+            <h1 className="text-3xl font-space-grotesk font-bold text-foreground mb-2">
+              Change Password
+            </h1>
+            <p className="text-muted-foreground">
               Update your password to keep your account secure
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="oldPassword">Current Password</Label>
+            </p>
+          </div>
+
+          {/* Change Password Form */}
+          <div className="bg-card rounded-2xl p-8 shadow-card">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="oldPassword" className="text-sm font-medium text-foreground mb-2 block">
+                  Current Password
+                </label>
                 <div className="relative">
                   <Input
                     id="oldPassword"
@@ -122,19 +128,23 @@ const ChangePassword = () => {
                     value={formData.oldPassword}
                     onChange={(e) => setFormData(prev => ({ ...prev, oldPassword: e.target.value }))}
                     required
+                    className="w-full pr-12"
+                    placeholder="Enter current password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility('old')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPasswords.old ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPasswords.old ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
+              <div>
+                <label htmlFor="newPassword" className="text-sm font-medium text-foreground mb-2 block">
+                  New Password
+                </label>
                 <div className="relative">
                   <Input
                     id="newPassword"
@@ -143,19 +153,23 @@ const ChangePassword = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
                     required
                     minLength={6}
+                    className="w-full pr-12"
+                    placeholder="Enter new password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility('new')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPasswords.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <div>
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground mb-2 block">
+                  Confirm New Password
+                </label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -164,34 +178,50 @@ const ChangePassword = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     required
                     minLength={6}
+                    className="w-full pr-12"
+                    placeholder="Confirm new password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility('confirm')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate("/profile")}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={loading} className="flex-1">
-                  {loading ? "Changing..." : "Change Password"}
-                </Button>
-              </div>
+              <Button 
+                type="submit" 
+                variant="gradient" 
+                size="lg" 
+                className="w-full font-semibold"
+                disabled={loading}
+              >
+                {loading ? "Changing Password..." : "Change Password"}
+              </Button>
             </form>
-          </CardContent>
-        </Card>
-      </main>
+
+            <div className="mt-6 text-center">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/profile")}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Cancel and go back
+              </Button>
+            </div>
+          </div>
+
+          {/* Security Notice */}
+          <div className="mt-6 bg-secondary/20 rounded-xl p-4 text-center">
+            <p className="text-muted-foreground text-sm">
+              <Lock className="w-4 h-4 inline mr-1" />
+              Choose a strong password to keep your account secure. Never share your password with anyone.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

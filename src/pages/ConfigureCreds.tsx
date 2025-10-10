@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Shield } from "lucide-react";
 import Navigation from "@/components/Navigation";
 
 const ConfigureCreds = () => {
@@ -93,46 +91,60 @@ const ConfigureCreds = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-accent/10">
       <Navigation />
-      <main className="container mx-auto px-4 py-8 max-w-md mt-20">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <UserPlus className="h-6 w-6 text-primary" />
-              <CardTitle>Configure Your Account</CardTitle>
+      
+      <div className="pt-24 pb-12 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-md">
+          {/* Logo & Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <UserPlus className="w-8 h-8 text-white" />
             </div>
-            <CardDescription>
+            <h1 className="text-3xl font-space-grotesk font-bold text-foreground mb-2">
+              Configure Your Account
+            </h1>
+            <p className="text-muted-foreground">
               Set up your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+            </p>
+          </div>
+
+          {/* Configuration Form */}
+          <div className="bg-card rounded-2xl p-8 shadow-card">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="email" className="text-sm font-medium text-foreground mb-2 block">
+                  Email
+                </label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   disabled
-                  className="bg-muted"
+                  className="w-full bg-muted"
+                  placeholder="your@email.com"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+              <div>
+                <label htmlFor="username" className="text-sm font-medium text-foreground mb-2 block">
+                  Username
+                </label>
                 <Input
                   id="username"
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
                   required
+                  className="w-full"
                   placeholder="Choose a username"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Set Password</Label>
+              <div>
+                <label htmlFor="password" className="text-sm font-medium text-foreground mb-2 block">
+                  Set Password
+                </label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -141,20 +153,23 @@ const ConfigureCreds = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                     required
                     minLength={6}
+                    className="w-full pr-12"
                     placeholder="Enter password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility('password')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPasswords.password ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPasswords.password ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div>
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground mb-2 block">
+                  Confirm Password
+                </label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -163,25 +178,40 @@ const ConfigureCreds = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     required
                     minLength={6}
+                    className="w-full pr-12"
                     placeholder="Confirm password"
                   />
                   <button
                     type="button"
                     onClick={() => togglePasswordVisibility('confirm')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <Button type="submit" disabled={loading} className="w-full mt-6">
-                {loading ? "Configuring..." : "Configure Account"}
+              <Button 
+                type="submit" 
+                variant="gradient" 
+                size="lg" 
+                className="w-full font-semibold"
+                disabled={loading}
+              >
+                {loading ? "Configuring Account..." : "Configure Account"}
               </Button>
             </form>
-          </CardContent>
-        </Card>
-      </main>
+          </div>
+
+          {/* Security Notice */}
+          <div className="mt-6 bg-secondary/20 rounded-xl p-4 text-center">
+            <p className="text-muted-foreground text-sm">
+              <Shield className="w-4 h-4 inline mr-1" />
+              Your account credentials are securely encrypted and protected.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
