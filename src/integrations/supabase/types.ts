@@ -170,6 +170,98 @@ export type Database = {
           },
         ]
       }
+      subscription: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          plan_id: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          subscriber_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          plan_id: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          subscriber_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          plan_id?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          subscriber_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plan"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_plan: {
+        Row: {
+          billing_interval_days: number
+          created_at: string
+          currency: string
+          description: string
+          id: string
+          is_active: boolean
+          is_discontinued: boolean
+          is_enterprise_plan: boolean
+          is_individual_plan: boolean
+          name: string
+          price: number
+          trial_days: number
+          updated_at: string
+        }
+        Insert: {
+          billing_interval_days: number
+          created_at?: string
+          currency?: string
+          description: string
+          id?: string
+          is_active?: boolean
+          is_discontinued?: boolean
+          is_enterprise_plan?: boolean
+          is_individual_plan?: boolean
+          name: string
+          price: number
+          trial_days?: number
+          updated_at?: string
+        }
+        Update: {
+          billing_interval_days?: number
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          is_discontinued?: boolean
+          is_enterprise_plan?: boolean
+          is_individual_plan?: boolean
+          name?: string
+          price?: number
+          trial_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_profiles: {
         Row: {
           created_at: string
@@ -211,7 +303,7 @@ export type Database = {
     }
     Functions: {
       ensure_profile: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           account_type: string
           created_at: string
@@ -228,6 +320,12 @@ export type Database = {
           updated_at: string
           user_id: string
         }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       generate_otp: {
         Args: {
@@ -241,10 +339,7 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
-      has_wallet_access: {
-        Args: { p_user_id: string }
-        Returns: boolean
-      }
+      has_wallet_access: { Args: { p_user_id: string }; Returns: boolean }
       validate_otp: {
         Args: { p_otp_code: string; p_otp_type: string; p_user_id: string }
         Returns: boolean
@@ -252,6 +347,7 @@ export type Database = {
     }
     Enums: {
       app_role: "ADMIN" | "ENTERPRISE" | "SUPPORT" | "USER"
+      subscription_status: "PENDING" | "ACTIVE" | "EXPIRED" | "CANCELLED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -380,6 +476,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["ADMIN", "ENTERPRISE", "SUPPORT", "USER"],
+      subscription_status: ["PENDING", "ACTIVE", "EXPIRED", "CANCELLED"],
     },
   },
 } as const

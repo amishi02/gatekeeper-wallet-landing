@@ -23,6 +23,9 @@ import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
 import ChangePassword from "./pages/ChangePassword";
 import ConfigureCreds from "./pages/ConfigureCreds";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
+import SubscriptionPlanForm from "./pages/SubscriptionPlanForm";
+import SubscriptionPlanUsers from "./pages/SubscriptionPlanUsers";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +70,21 @@ const App = () => (
             <Route path="/change-password" element={
               <ProtectedRoute>
                 <ChangePassword />
+              </ProtectedRoute>
+            } />
+            <Route path="/subscription-plans" element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <SubscriptionPlans />
+              </ProtectedRoute>
+            } />
+            <Route path="/subscription-plans/:id" element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <SubscriptionPlanForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/subscription-plans/:id/users" element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <SubscriptionPlanUsers />
               </ProtectedRoute>
             } />
             

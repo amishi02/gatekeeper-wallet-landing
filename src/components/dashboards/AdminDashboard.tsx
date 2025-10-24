@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users, Building, CreditCard, Settings, BarChart3, Shield, Wallet, DollarSign, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,12 +8,13 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function AdminDashboard() {
   const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const adminOperations = [
-    { icon: Building, title: 'Manage Enterprises', description: 'Create, update, delete enterprises' },
-    { icon: Users, title: 'Manage All Users', description: 'Enterprise owners, users, support staff' },
-    { icon: Shield, title: 'Support Team', description: 'Add, edit, delete support members' },
-    { icon: CreditCard, title: 'Subscription Plans', description: 'Create, modify, discontinue plans' }
+    { icon: Building, title: 'Manage Enterprises', description: 'Create, update, delete enterprises', route: '/manage-users' },
+    { icon: Users, title: 'Manage All Users', description: 'Enterprise owners, users, support staff', route: '/manage-users' },
+    { icon: Shield, title: 'Support Team', description: 'Add, edit, delete support members', route: '/manage-users' },
+    { icon: CreditCard, title: 'Subscription Plans', description: 'Create, modify, discontinue plans', route: '/subscription-plans' }
   ];
 
   const recentTransactions = [
@@ -44,7 +46,11 @@ export function AdminDashboard() {
           {adminOperations.map((operation, index) => {
             const IconComponent = operation.icon;
             return (
-              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card 
+                key={index} 
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => navigate(operation.route)}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3">
                     <IconComponent className="h-8 w-8 text-primary" />
