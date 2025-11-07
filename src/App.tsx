@@ -26,6 +26,8 @@ import ConfigureCreds from "./pages/ConfigureCreds";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
 import SubscriptionPlanForm from "./pages/SubscriptionPlanForm";
 import SubscriptionPlanUsers from "./pages/SubscriptionPlanUsers";
+import CredentialsSuccess from "./pages/CredentialsSuccess";
+import CredentialsExpired from "./pages/CredentialsExpired";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/configure-creds" element={<ConfigureCreds />} />
+            <Route path="/credentials-success" element={<CredentialsSuccess />} />
+            <Route path="/credentials-expired" element={<CredentialsExpired />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             
             {/* Protected Routes */}
