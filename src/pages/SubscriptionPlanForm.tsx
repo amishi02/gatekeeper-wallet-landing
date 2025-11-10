@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -165,7 +166,9 @@ export default function SubscriptionPlanForm() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-3xl">
+    <div className="min-h-screen">
+      <Navigation />
+      <div className="container mx-auto p-6 pt-24 max-w-3xl">
       <Button
         variant="ghost"
         onClick={() => navigate('/subscription-plans')}
@@ -327,6 +330,7 @@ export default function SubscriptionPlanForm() {
           </div>
         </form>
       </Card>
+      </div>
     </div>
   );
 }

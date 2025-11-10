@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -185,7 +186,9 @@ export default function SubscriptionPlans() {
   const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen">
+      <Navigation />
+      <div className="container mx-auto p-6 pt-24 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Subscription Plans</h1>
@@ -392,6 +395,7 @@ export default function SubscriptionPlans() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }

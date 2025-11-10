@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -112,7 +113,9 @@ export default function SubscriptionPlanUsers() {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="min-h-screen">
+      <Navigation />
+      <div className="container mx-auto p-6 pt-24">
       <Button
         variant="ghost"
         onClick={() => navigate('/subscription-plans')}
@@ -175,6 +178,7 @@ export default function SubscriptionPlanUsers() {
           </Table>
         )}
       </Card>
+      </div>
     </div>
   );
 }
