@@ -126,11 +126,11 @@ export default function SubscriptionPlanUsers() {
       </Button>
 
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Users Subscribed to {planName}</h1>
-        <p className="text-muted-foreground">View all users with this subscription plan</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Users Subscribed to {planName}</h1>
+        <p className="text-sm text-muted-foreground">View all users with this subscription plan</p>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -140,42 +140,44 @@ export default function SubscriptionPlanUsers() {
             No users have subscribed to this plan yet
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead>Subscribed On</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {subscriptions.map((subscription) => (
-                <TableRow key={subscription.id}>
-                  <TableCell className="font-medium">
-                    {subscription.subscriber?.full_name || 'N/A'}
-                  </TableCell>
-                  <TableCell>{subscription.subscriber?.email || 'N/A'}</TableCell>
-                  <TableCell>{getStatusBadge(subscription)}</TableCell>
-                  <TableCell>
-                    {subscription.start_date
-                      ? format(new Date(subscription.start_date), 'MMM dd, yyyy')
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {subscription.end_date
-                      ? format(new Date(subscription.end_date), 'MMM dd, yyyy')
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(subscription.created_at), 'MMM dd, yyyy')}
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px]">User</TableHead>
+                  <TableHead className="min-w-[200px]">Email</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[120px]">Start Date</TableHead>
+                  <TableHead className="min-w-[120px]">End Date</TableHead>
+                  <TableHead className="min-w-[120px]">Subscribed On</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {subscriptions.map((subscription) => (
+                  <TableRow key={subscription.id}>
+                    <TableCell className="font-medium">
+                      {subscription.subscriber?.full_name || 'N/A'}
+                    </TableCell>
+                    <TableCell className="break-all">{subscription.subscriber?.email || 'N/A'}</TableCell>
+                    <TableCell>{getStatusBadge(subscription)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {subscription.start_date
+                        ? format(new Date(subscription.start_date), 'MMM dd, yyyy')
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {subscription.end_date
+                        ? format(new Date(subscription.end_date), 'MMM dd, yyyy')
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {format(new Date(subscription.created_at), 'MMM dd, yyyy')}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </Card>
       </div>

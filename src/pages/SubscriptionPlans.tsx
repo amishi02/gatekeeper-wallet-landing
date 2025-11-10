@@ -189,19 +189,19 @@ export default function SubscriptionPlans() {
     <div className="min-h-screen">
       <Navigation />
       <div className="container mx-auto p-6 pt-24 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Subscription Plans</h1>
-          <p className="text-muted-foreground">Manage subscription plans and pricing</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Subscription Plans</h1>
+          <p className="text-sm text-muted-foreground">Manage subscription plans and pricing</p>
         </div>
-        <Button onClick={() => navigate('/subscription-plans/new')}>
+        <Button onClick={() => navigate('/subscription-plans/new')} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Create New Plan
         </Button>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -211,27 +211,29 @@ export default function SubscriptionPlans() {
               className="pl-10"
             />
           </div>
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Plan Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="enterprise">Enterprise</SelectItem>
-              <SelectItem value="individual">Individual</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-              <SelectItem value="discontinued">Discontinued</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Plan Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="enterprise">Enterprise</SelectItem>
+                <SelectItem value="individual">Individual</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="discontinued">Discontinued</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {loading ? (
@@ -240,109 +242,111 @@ export default function SubscriptionPlans() {
           </div>
         ) : (
           <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => toggleSort('name')}
-                      className="flex items-center gap-2"
-                    >
-                      Name
-                      <ArrowUpDown className="h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => toggleSort('price')}
-                      className="flex items-center gap-2"
-                    >
-                      Price
-                      <ArrowUpDown className="h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Billing Interval</TableHead>
-                  <TableHead>Trial Days</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {plans.map((plan) => (
-                  <TableRow key={plan.id}>
-                    <TableCell className="font-medium">{plan.name}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {plan.is_enterprise_plan && (
-                          <Badge variant="outline">Enterprise</Badge>
-                        )}
-                        {plan.is_individual_plan && (
-                          <Badge variant="outline">Individual</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {plan.currency} {Number(plan.price).toFixed(2)}
-                    </TableCell>
-                    <TableCell>{plan.billing_interval_days} days</TableCell>
-                    <TableCell>{plan.trial_days} days</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {plan.is_discontinued ? (
-                          <Badge variant="destructive">Discontinued</Badge>
-                        ) : plan.is_active ? (
-                          <Badge variant="default">Active</Badge>
-                        ) : (
-                          <Badge variant="secondary">Inactive</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/subscription-plans/${plan.id}`)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate(`/subscription-plans/${plan.id}/users`)}
-                        >
-                          <Users className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleToggleActive(plan.id, plan.is_active)}
-                        >
-                          {plan.is_active ? (
-                            <ToggleRight className="h-4 w-4" />
-                          ) : (
-                            <ToggleLeft className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedPlanId(plan.id);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[150px]">
+                      <Button
+                        variant="ghost"
+                        onClick={() => toggleSort('name')}
+                        className="flex items-center gap-2 p-0 h-auto"
+                      >
+                        Name
+                        <ArrowUpDown className="h-4 w-4" />
+                      </Button>
+                    </TableHead>
+                    <TableHead className="min-w-[120px]">Type</TableHead>
+                    <TableHead className="min-w-[100px]">
+                      <Button
+                        variant="ghost"
+                        onClick={() => toggleSort('price')}
+                        className="flex items-center gap-2 p-0 h-auto"
+                      >
+                        Price
+                        <ArrowUpDown className="h-4 w-4" />
+                      </Button>
+                    </TableHead>
+                    <TableHead className="min-w-[120px]">Billing Interval</TableHead>
+                    <TableHead className="min-w-[100px]">Trial Days</TableHead>
+                    <TableHead className="min-w-[120px]">Status</TableHead>
+                    <TableHead className="text-right min-w-[180px]">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {plans.map((plan) => (
+                    <TableRow key={plan.id}>
+                      <TableCell className="font-medium">{plan.name}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          {plan.is_enterprise_plan && (
+                            <Badge variant="outline" className="w-fit text-xs">Enterprise</Badge>
+                          )}
+                          {plan.is_individual_plan && (
+                            <Badge variant="outline" className="w-fit text-xs">Individual</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {plan.currency} {Number(plan.price).toFixed(2)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">{plan.billing_interval_days} days</TableCell>
+                      <TableCell className="whitespace-nowrap">{plan.trial_days} days</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {plan.is_discontinued ? (
+                            <Badge variant="destructive" className="text-xs">Discontinued</Badge>
+                          ) : plan.is_active ? (
+                            <Badge variant="default" className="text-xs">Active</Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-xs">Inactive</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate(`/subscription-plans/${plan.id}`)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate(`/subscription-plans/${plan.id}/users`)}
+                          >
+                            <Users className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleToggleActive(plan.id, plan.is_active)}
+                          >
+                            {plan.is_active ? (
+                              <ToggleRight className="h-4 w-4" />
+                            ) : (
+                              <ToggleLeft className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedPlanId(plan.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             {plans.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
@@ -351,8 +355,8 @@ export default function SubscriptionPlans() {
             )}
 
             {totalPages > 1 && (
-              <div className="flex justify-between items-center mt-4">
-                <p className="text-sm text-muted-foreground">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
                   {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} plans
                 </p>

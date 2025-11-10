@@ -178,8 +178,8 @@ export default function SubscriptionPlanForm() {
         Back to Plans
       </Button>
 
-      <Card className="p-6">
-        <h1 className="text-3xl font-bold mb-6">
+      <Card className="p-4 sm:p-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
           {id && id !== 'new' ? 'Edit' : 'Create'} Subscription Plan
         </h1>
 
@@ -207,7 +207,7 @@ export default function SubscriptionPlanForm() {
             {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="price">Price *</Label>
               <Input
@@ -232,7 +232,7 @@ export default function SubscriptionPlanForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="billing_interval">Billing Interval (days) *</Label>
               <Input
@@ -320,11 +320,11 @@ export default function SubscriptionPlanForm() {
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <Button type="submit" disabled={loading}>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading ? 'Saving...' : id && id !== 'new' ? 'Update Plan' : 'Create Plan'}
             </Button>
-            <Button type="button" variant="outline" onClick={() => navigate('/subscription-plans')}>
+            <Button type="button" variant="outline" onClick={() => navigate('/subscription-plans')} className="w-full sm:w-auto">
               Cancel
             </Button>
           </div>
