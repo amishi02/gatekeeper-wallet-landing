@@ -30,6 +30,7 @@ const Profile = () => {
   const [enterpriseData, setEnterpriseData] = useState<EnterpriseProfile | null>(null);
   
   const [formData, setFormData] = useState({
+    full_name: '',
     phone_number: '',
     username: '',
     profile_picture_url: ''
@@ -78,6 +79,7 @@ const Profile = () => {
 
       setDisplayData(userData);
       setFormData({
+        full_name: userData.full_name,
         phone_number: userData.phone_number,
         username: userData.username,
         profile_picture_url: userData.profile_picture_url
@@ -157,6 +159,7 @@ const Profile = () => {
     setIsEditMode(false);
     // Reset form data to current display data
     setFormData({
+      full_name: displayData.full_name,
       phone_number: displayData.phone_number,
       username: displayData.username,
       profile_picture_url: displayData.profile_picture_url
@@ -169,10 +172,11 @@ const Profile = () => {
 
     setLoading(true);
     try {
-      // Update profiles table (only phone_number)
+      // Update profiles table (full_name and phone_number)
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
+          full_name: formData.full_name,
           phone_number: formData.phone_number
         })
         .eq('user_id', user.id);
@@ -195,6 +199,7 @@ const Profile = () => {
       // Update display data
       setDisplayData({
         ...displayData,
+        full_name: formData.full_name,
         phone_number: formData.phone_number,
         username: formData.username,
         profile_picture_url: formData.profile_picture_url
@@ -364,10 +369,20 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Full Name - Read Only */}
+                    {/* Full Name - Editable */}
                     <div className="space-y-2">
-                      <Label className="text-muted-foreground">Full Name</Label>
-                      <div className="text-lg font-medium">{displayData.full_name || 'Not set'}</div>
+                      <Label htmlFor="full_name" className="text-muted-foreground">Full Name</Label>
+                      {isEditMode ? (
+                        <Input
+                          id="full_name"
+                          name="full_name"
+                          value={formData.full_name}
+                          onChange={handleInputChange}
+                          placeholder="Enter your full name"
+                        />
+                      ) : (
+                        <div className="text-lg font-medium">{displayData.full_name || 'Not set'}</div>
+                      )}
                     </div>
 
                     {/* Username - Editable */}
