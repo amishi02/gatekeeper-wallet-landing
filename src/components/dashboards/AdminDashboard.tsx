@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Building, CreditCard, Settings, BarChart3, Shield, Wallet, DollarSign, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
+import { PlatformWallets } from './PlatformWallets';
 
 export function AdminDashboard() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isWalletsOpen, setIsWalletsOpen] = useState(false);
 
   const adminOperations = [
     { icon: Building, title: 'Manage Enterprises', description: 'Create, update, delete enterprises', route: '/manage-users' },
@@ -33,9 +36,27 @@ export function AdminDashboard() {
     <div className="min-h-screen bg-background pt-16">
       <div className="border-b bg-card/50">
         <div className="container mx-auto px-4 py-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
+            </div>
+            <Sheet open={isWalletsOpen} onOpenChange={setIsWalletsOpen}>
+              <SheetTrigger asChild>
+                <Button>
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Platform Wallets
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Platform Wallets Management</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6">
+                  <PlatformWallets />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>

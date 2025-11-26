@@ -111,6 +111,39 @@ export type Database = {
           },
         ]
       }
+      platform_wallets: {
+        Row: {
+          chain: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          label: string
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          chain: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          label: string
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          chain?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: string
