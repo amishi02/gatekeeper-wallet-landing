@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Wallet, Plus, Eye } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Wallet, Plus, Eye, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PlatformWallet {
@@ -25,6 +26,9 @@ export function PlatformWallets() {
   const [loading, setLoading] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<PlatformWallet | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'created_at' | 'updated_at'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -130,9 +134,31 @@ export function PlatformWallets() {
     }
   };
 
+  const filteredAndSortedWallets = useMemo(() => {
+    let filtered = wallets;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(wallet =>
+        wallet.wallet_address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        wallet.chain.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        wallet.label.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const dateA = new Date(a[sortBy]).getTime();
+      const dateB = new Date(b[sortBy]).getTime();
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+
+    return filtered;
+  }, [wallets, searchTerm, sortBy, sortOrder]);
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold">Platform Wallets</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
@@ -197,6 +223,38 @@ export function PlatformWallets() {
         </Dialog>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by address, chain, or label..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Select value={sortBy} onValueChange={(value: 'created_at' | 'updated_at') => setSortBy(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="created_at">Created Date</SelectItem>
+              <SelectItem value="updated_at">Updated Date</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortOrder} onValueChange={(value: 'asc' | 'desc') => setSortOrder(value)}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Order" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc">Newest First</SelectItem>
+              <SelectItem value="asc">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="grid gap-4">
         {loading && wallets.length === 0 ? (
           <Card>
@@ -204,15 +262,17 @@ export function PlatformWallets() {
               <p className="text-muted-foreground">Loading wallets...</p>
             </CardContent>
           </Card>
-        ) : wallets.length === 0 ? (
+        ) : filteredAndSortedWallets.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center">
               <Wallet className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No platform wallets added yet</p>
+              <p className="text-muted-foreground">
+                {searchTerm ? 'No wallets found matching your search' : 'No platform wallets added yet'}
+              </p>
             </CardContent>
           </Card>
         ) : (
-          wallets.map((wallet) => (
+          filteredAndSortedWallets.map((wallet) => (
             <Card key={wallet.id}>
               <CardContent className="py-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
