@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Wallet, Plus, Eye, Search } from 'lucide-react';
+import { Wallet, Plus, Eye, Search, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PlatformWallet {
@@ -109,26 +109,55 @@ export function PlatformWallets() {
     }
   };
 
-  const toggleWalletStatus = async (wallet: PlatformWallet) => {
+  const activateWallet = async (wallet: PlatformWallet) => {
     try {
       const { error } = await supabase
         .from('platform_wallets')
-        .update({ is_active: !wallet.is_active })
+        .update({ is_active: true })
         .eq('id', wallet.id);
 
       if (error) throw error;
 
       toast({
         title: 'Success',
-        description: 'Wallet status updated'
+        description: 'Wallet activated successfully'
       });
 
       fetchWallets();
     } catch (error) {
-      console.error('Error updating wallet:', error);
+      console.error('Error activating wallet:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update wallet status',
+        description: 'Failed to activate wallet',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const deleteWallet = async (wallet: PlatformWallet) => {
+    if (!confirm(`Are you sure you want to delete "${wallet.label}"?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('platform_wallets')
+        .delete()
+        .eq('id', wallet.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Wallet deleted successfully'
+      });
+
+      fetchWallets();
+    } catch (error) {
+      console.error('Error deleting wallet:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete wallet',
         variant: 'destructive'
       });
     }
@@ -332,12 +361,21 @@ export function PlatformWallets() {
                         </div>
                       </DialogContent>
                     </Dialog>
+                    {!wallet.is_active && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => activateWallet(wallet)}
+                      >
+                        Activate
+                      </Button>
+                    )}
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      onClick={() => toggleWalletStatus(wallet)}
+                      onClick={() => deleteWallet(wallet)}
                     >
-                      {wallet.is_active ? 'Deactivate' : 'Activate'}
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
