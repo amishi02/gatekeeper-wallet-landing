@@ -7,11 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlatformWallets } from './PlatformWallets';
+import { SupportTeamManagement } from './SupportTeamManagement';
 
 export function AdminDashboard() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [isWalletsOpen, setIsWalletsOpen] = useState(false);
+  const [isSupportTeamOpen, setIsSupportTeamOpen] = useState(false);
 
   const adminOperations = [
     { icon: Building, title: 'Manage Enterprises', description: 'Create, update, delete enterprises', route: '/manage-users' },
@@ -41,22 +43,40 @@ export function AdminDashboard() {
               <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
               <p className="text-muted-foreground">Welcome back, {profile?.full_name}</p>
             </div>
-            <Sheet open={isWalletsOpen} onOpenChange={setIsWalletsOpen}>
-              <SheetTrigger asChild>
-                <Button>
-                  <Wallet className="mr-2 h-4 w-4" />
-                  Platform Wallets
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Platform Wallets Management</SheetTitle>
-                </SheetHeader>
-                <div className="mt-6">
-                  <PlatformWallets />
-                </div>
-              </SheetContent>
-            </Sheet>
+            <div className="flex gap-2">
+              <Sheet open={isSupportTeamOpen} onOpenChange={setIsSupportTeamOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Support Team
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Support Team Management</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6">
+                    <SupportTeamManagement />
+                  </div>
+                </SheetContent>
+              </Sheet>
+              <Sheet open={isWalletsOpen} onOpenChange={setIsWalletsOpen}>
+                <SheetTrigger asChild>
+                  <Button>
+                    <Wallet className="mr-2 h-4 w-4" />
+                    Platform Wallets
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Platform Wallets Management</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6">
+                    <PlatformWallets />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>
